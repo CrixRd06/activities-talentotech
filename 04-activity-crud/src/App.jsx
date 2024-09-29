@@ -1,34 +1,50 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import { UsersList } from './components/UsersList';
+import { UserForm } from './components/UserForm';
 
 function App() {
-  const [count, setCount] = useState(0)
+
+  const [users, setUsers] = useState([
+    { id: 1, name: 'Juan', email: 'juan@gmail.com' },
+    { id: 2, name: 'Maria', email: 'maria@gmail.com' }
+  ]);
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  const handleAddUser = () => {
+    if (name && email) {
+      const newUser = {
+        id: users.length + 1,
+        name,
+        email
+      };
+      setUsers([...users, newUser]);
+      setName("");
+      setEmail("");
+    }
+  }
+
+  const handleUpdateUser = () => {
+    setUsers(
+      users.map((user) =>
+        user.id === currentUser.id ? { ...user, name, email } : user
+      )
+    );
+    setEditing(false);
+    setName("");
+    setEmail("");
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <main className='app'>
+      <h1 className='app-title'>CRUD Usuarios</h1>
+      <UserForm name={name} email={email} setName={setName} setEmail={setEmail} editing={editing} handleAddUser={handleAddUser} handleUpdateUser={handleUpdateUser}/>
+      <UsersList users={users} setUsers={setUsers} setEditing={setEditing} setCurrentUser={setCurrentUser} setName={setName} setEmail={setEmail}/>
+    </main>
   )
 }
 
